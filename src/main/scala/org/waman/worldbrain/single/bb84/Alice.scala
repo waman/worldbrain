@@ -1,6 +1,5 @@
 package org.waman.worldbrain.single.bb84
 
-import org.apache.commons.rng.UniformRandomProvider
 import org.waman.worldbrain
 import org.waman.worldbrain.single._
 import org.waman.worldbrain.single.bb84.BB84._

@@ -4,40 +4,56 @@ import akka.Done
 import akka.actor.{ActorSystem, Props}
 import akka.pattern._
 import akka.util.Timeout
-import org.scalatest.BeforeAndAfter
 import org.waman.worldbrain.KeyContainer.RequestKey
 import org.waman.worldbrain.WorldbrainCustomSpec
 import org.waman.worldbrain.single.bb84.BB84._
+import spire.random.Generator
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContextExecutor, Future}
 import scala.language.postfixOps
 
-class BB84withEverSpec extends WorldbrainCustomSpec with BeforeAndAfter{
+class BB84withEverSpec extends WorldbrainCustomSpec{
 
-  val system = ActorSystem("BB84withEveSystem")
-  implicit val dispatcher: ExecutionContextExecutor = system.dispatcher
-  implicit val timeout = Timeout(180 second)
+  val rng = new RandomInRealBasisFactory(Generator.rng)
 
   "Emulate BB84 key distribution protocol eavesdropped by Eve" - {
 
-    "with bit length 18 and n = 1" in {
-      execute(18, 1, "Quick")
+    "with bitLength = 18, n = 2, and random bases" in {
+      execute(18, 2, "Quick", rng)
     }
 
-    "with bit length 10 to 20 and n = 1000" in {
-      val minBitLength = 10
-      val maxBitLength = 20
+    "with bitLength 10 to 20, n = 1000 and random bases" in {
       val n = 1000
-      (minBitLength to maxBitLength).foreach(execute(_, n, "Slow"))
+      (10 to 20).foreach{
+        execute(_, 1000, "Slow", rng)
+      }
     }
 
-    def execute(bitLength: Int, n: Int, postfix: String): Unit = {
+    "with bitLength 10 to 20, n = 1000 and fixed basis (theta = 0)" in {
+      val n = 1000
+      (10 to 20).foreach{
+        execute(_, 1000, "theta0", new FixedBasisFactory(0.0))
+      }
+    }
+
+    "with bitLength 10 to 20, n = 1000 and fixed basis (theta = PI)" in {
+      val n = 1000
+      (10 to 20).foreach{
+        execute(_, 1000, "thetaPI", new FixedBasisFactory(Math.PI))
+      }
+    }
+
+    def execute(bitLength: Int, n: Int, postfix: String, bf: BasisFactory): Unit = {
+      val system = ActorSystem(s"BB84withEver${postfix}System")
+      implicit val dispatcher: ExecutionContextExecutor = system.dispatcher
+      implicit val timeout = Timeout(20 second)
+
       val successList: Seq[Future[Result]] = (0 until n).map{ i =>
         val alice = system.actorOf(Props(new Alice), s"Alice$postfix$bitLength-$i")
         val bob   = system.actorOf(Props(new Bob), s"Bob$postfix$bitLength-$i")
 
-        val bobe  = system.actorOf(Props(new Ever(alice, bob)), s"Ever$postfix$bitLength-$i")
+        val bobe  = system.actorOf(Props(Ever(alice, bob)), s"Ever$postfix$bitLength-$i")
 
         alice ! EstablishKey(bobe, bitLength)
 
@@ -61,12 +77,9 @@ class BB84withEverSpec extends WorldbrainCustomSpec with BeforeAndAfter{
       }
 
       val success: Future[Result] = Future.sequence(successList).map(_.reduce(_ + _))
-      Await.result(success, 180 second)
+
+      Await.result(success, 60 second)
       success.foreach(r => println(r.toString(n, bitLength)))
     }
-  }
-
-  after{
-    system.terminate()
   }
 }

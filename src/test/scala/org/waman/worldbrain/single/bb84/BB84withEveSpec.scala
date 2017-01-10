@@ -4,7 +4,6 @@ import akka.Done
 import akka.actor._
 import akka.pattern._
 import akka.util.Timeout
-import org.scalatest.BeforeAndAfter
 import org.waman.worldbrain.KeyContainer.RequestKey
 import org.waman.worldbrain.WorldbrainCustomSpec
 import org.waman.worldbrain.single.bb84.BB84.EstablishKey
@@ -24,23 +23,24 @@ case class Result(isSuccess: Int, matchingBitCount: Int){
   }
 }
 
-class BB84withEveSpec extends WorldbrainCustomSpec with BeforeAndAfter{
-
-  val system = ActorSystem("BB84withEveSystem")
-  implicit val dispatcher: ExecutionContextExecutor = system.dispatcher
-  implicit val timeout = Timeout(60 second)
+class BB84withEveSpec extends WorldbrainCustomSpec{
 
   "Emulate BB84 with Eve" - {
 
-    "with bitLength = 18, n = 1" in {
-      execute(bitLength = 18, n = 1, postfix = "Quick")
+    "with bitLength = 18, n = 2" in {
+      execute(18, 2, "Quick")
     }
 
     "with bitLength = 18, n = 1000" in {
-      execute(bitLength = 18, n = 1000, postfix = "Slow")
+      execute(18, 1000, "Slow")
     }
 
     def execute(bitLength: Int, n: Int, postfix: String): Unit = {
+
+      val system = ActorSystem(s"BB84withEve${postfix}System")
+      implicit val dispatcher: ExecutionContextExecutor = system.dispatcher
+      implicit val timeout = Timeout(20 second)
+
       val successList: Seq[Future[Result]] = (0 until n).map{ i =>
         val alice = system.actorOf(Props(new Alice), s"Alice$postfix$bitLength-$i")
         val bob   = system.actorOf(Props(new Bob), s"Bob$postfix$bitLength-$i")
@@ -73,9 +73,5 @@ class BB84withEveSpec extends WorldbrainCustomSpec with BeforeAndAfter{
       Await.result(success, 60 second)
       success.foreach(r => println(r.toString(n, bitLength)))
     }
-  }
-
-  after{
-    system.terminate()
   }
 }
