@@ -1,4 +1,4 @@
-package org.waman.worldbrain.single.bb84
+package org.waman.worldbrain.single.b92
 
 import akka.actor._
 import akka.pattern.ask
@@ -11,9 +11,9 @@ import scala.concurrent._
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-class BB84Spec extends WorldbrainCustomSpec{
+class B92Spec extends WorldbrainCustomSpec{
 
-  "Emulate BB84 key distribution protocol" - {
+  "Emulate B92 key distribution protocol" - {
 
     "with bitSize = 18, n = 2" in {
       executeWith(18, 2, "Quick")
@@ -25,7 +25,7 @@ class BB84Spec extends WorldbrainCustomSpec{
 
     def executeWith(bitSize: Int, n: Int, postfix: String): Unit = {
 
-      val system = ActorSystem(s"BB84${postfix}System")
+      val system = ActorSystem(s"B92${postfix}System")
       implicit val dispatcher: ExecutionContextExecutor = system.dispatcher
       implicit val timeout = Timeout(20 second)
 

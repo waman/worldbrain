@@ -2,6 +2,7 @@ package org.waman.worldbrain.single
 
 import org.waman.worldbrain.WorldbrainCustomSpec
 import org.waman.worldbrain.single.BasisVector._
+import org.waman.worldbrain.single.StateBasis._
 
 class QubitSpec extends WorldbrainCustomSpec{
 

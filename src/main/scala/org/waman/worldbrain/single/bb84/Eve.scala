@@ -3,7 +3,6 @@ package org.waman.worldbrain.single.bb84
 import akka.actor.ActorRef
 import org.waman.worldbrain
 import org.waman.worldbrain.single.BasisVector
-import org.waman.worldbrain.single.bb84.BB84._
 import spire.random.Generator
 
 class Eve(alice: ActorRef, bob: ActorRef)(implicit rng: Generator)
@@ -17,7 +16,7 @@ class Eve(alice: ActorRef, bob: ActorRef)(implicit rng: Generator)
       val bases = createRandomBases(rng, qubits.length)
 
       this.states = qubits.zip(bases).map{
-        case (qubit, basis) => qubit.observe(basis)
+        case (qubit, basis) => qubit.observe(basis)(rng)
       }
 
       this.bob ! m

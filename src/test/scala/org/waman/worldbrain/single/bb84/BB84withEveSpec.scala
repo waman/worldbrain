@@ -6,7 +6,7 @@ import akka.pattern._
 import akka.util.Timeout
 import org.waman.worldbrain.KeyContainer.RequestKey
 import org.waman.worldbrain.WorldbrainCustomSpec
-import org.waman.worldbrain.single.bb84.BB84.EstablishKey
+import org.waman.worldbrain.single.Protocol.EstablishKey
 
 import scala.concurrent._
 import scala.concurrent.duration._

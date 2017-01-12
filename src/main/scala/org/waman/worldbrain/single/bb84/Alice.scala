@@ -1,8 +1,9 @@
 package org.waman.worldbrain.single.bb84
 
 import org.waman.worldbrain
+import org.waman.worldbrain.single.BasisVector._
+import org.waman.worldbrain.single.Protocol.EstablishKey
 import org.waman.worldbrain.single._
-import org.waman.worldbrain.single.bb84.BB84._
 import spire.random.Generator
 
 class Alice(implicit rng: Generator)
@@ -17,7 +18,7 @@ class Alice(implicit rng: Generator)
       bob ! QubitMessage(qubits)
 
     case RequestCorrectBases =>
-      val bases = this.states.map(BasisVector.getBasis)
+      val bases = this.states.map(BasisVector.getBasis).map(encode)
       sender() ! CorrectBasisMessage(bases)
 
     case BasisFilterMessage(filter) =>

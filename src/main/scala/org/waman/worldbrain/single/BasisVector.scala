@@ -1,12 +1,15 @@
 package org.waman.worldbrain.single
 
-import org.waman.worldbrain.ComplexImplicits._
-import org.waman.worldbrain.Tolerance
-import spire.math.Complex
 
 import scala.math._
+
+import spire.math.Complex
 import spire.implicits._
 import spire.random.Generator
+
+import org.waman.worldbrain.single.StateBasis._
+import org.waman.worldbrain.ComplexImplicits._
+import org.waman.worldbrain.Tolerance
 
 case class BasisVector(a: Complex[Double], b: Complex[Double]){
 
@@ -70,7 +73,8 @@ case class BasisVector(a: Complex[Double], b: Complex[Double]){
 
 object BasisVector {
 
-  private val i = Complex.i[Double]
+  private val sqrt2inv: Complex[Double] = Complex(1.0/sqrt(2))
+  private val i: Complex[Double] = Complex.i[Double]
 
   def ofBlochSphere(theta: Double): BasisVector = {
     val thetaBy2 = theta/2.0
@@ -102,5 +106,29 @@ object BasisVector {
     case PlusImaginary | MinusImaginary => Imaginary
     case _ =>
       StateBasis(Seq(state, state.getPerpendicular))
+  }
+
+  object Zero extends BasisVector(1, 0){
+    override def toString: String = "|0>"
+  }
+
+  object One extends BasisVector(0, 1){
+    override def toString: String = "|1>"
+  }
+
+  object Plus extends BasisVector(sqrt2inv, sqrt2inv){
+    override def toString: String = "|+>"
+  }
+
+  object Minus extends BasisVector(sqrt2inv, -sqrt2inv){
+    override def toString: String = "|->"
+  }
+
+  object PlusImaginary extends BasisVector(sqrt2inv, i*sqrt2inv){
+    override def toString: String = "|i>"
+  }
+
+  object MinusImaginary extends BasisVector(sqrt2inv, -i*sqrt2inv){
+    override def toString: String = "|-i>"
   }
 }
