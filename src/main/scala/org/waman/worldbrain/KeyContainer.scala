@@ -12,7 +12,7 @@ trait KeyContainer{ this: Actor =>
   import context._
 
   protected def bitLength: Int
-  private var keyBits: Seq[Int] = _
+  private var keyBits: Seq[Int] = Seq()
   protected val keyPromise: Promise[Seq[Int]] = Promise()
 
   protected def addKeyBits(bits: Seq[Int]): Int = {
