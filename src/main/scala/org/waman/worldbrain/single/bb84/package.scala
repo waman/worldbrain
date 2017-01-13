@@ -1,22 +1,13 @@
 package org.waman.worldbrain.single
 
+import org.waman.worldbrain.KeyContainer._
 import org.waman.worldbrain.single.BasisVector._
 import org.waman.worldbrain.single.StateBasis._
-import spire.random.Generator
 
 package object bb84 {
 
-  private[bb84] def createRandomBases(rng: Generator, n: Int): Seq[StateBasis] =
-    (0 until n).map{ i =>
-      if(rng.nextBoolean) Standard
-      else                Hadamard
-    }
-
   private[bb84] def extractKey(states: Seq[BasisVector], filter: Seq[Int]): Seq[Int] =
     applyFilter(states, filter).map(encode)
-
-  private[bb84] def applyFilter[E](seq: Seq[E], filter: Seq[Int]): Seq[E] =
-    (seq zip filter).filter(_._2 == 1).map(_._1)
 
   private[bb84] def encode(state: BasisVector): Int = state match {
     case Zero | Plus => 0

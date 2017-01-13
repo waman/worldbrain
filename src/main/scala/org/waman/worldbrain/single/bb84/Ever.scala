@@ -3,10 +3,14 @@ package org.waman.worldbrain.single.bb84
 import akka.actor.ActorRef
 import org.waman.worldbrain
 import org.waman.worldbrain.single.{BasisVector, StateBasis}
+import org.waman.worldbrain.KeyContainer._
 import spire.random.Generator
 
-class Ever private(alice: ActorRef, bob: ActorRef, basisFactory: BasisFactory, rng: Generator)
-    extends worldbrain.Eve[Seq[Int]](alice, bob){
+class Ever private(alice: ActorRef, bob: ActorRef, protected val bitLength: Int,
+                   basisFactory: BasisFactory, rng: Generator)
+    extends worldbrain.Eve(alice, bob){
+
+  require(bitLength > 0)
 
   private var bits: Seq[Int] = _
 
@@ -15,7 +19,7 @@ class Ever private(alice: ActorRef, bob: ActorRef, basisFactory: BasisFactory, r
       val qubits = m.qubits
       val bases = basisFactory.createBases(qubits.length)
 
-      this.bits = qubits.zip(bases).map{
+      this.bits = (qubits zip bases).map{
         case (qubit, basis) =>
           val state = qubit.observe(basis)(rng)
           if(state == basis.states.head) 0 else 1
@@ -24,18 +28,19 @@ class Ever private(alice: ActorRef, bob: ActorRef, basisFactory: BasisFactory, r
       this.bob ! m
 
     case m: BasisFilterMessage =>
-      setKey(applyFilter(this.bits, m.filter))
+      addKeyBits(applyFilter(this.bits, m.filter))
       this.alice ! m
   }
 }
 
 object Ever{
 
-  def apply(alice: ActorRef, bob: ActorRef)(implicit rng: Generator): Ever =
-    new Ever(alice, bob, new RandomInRealBasisFactory(rng), rng)
+  def apply(alice: ActorRef, bob: ActorRef, bitLength: Int)(implicit rng: Generator): Ever =
+    new Ever(alice, bob, bitLength, new RandomInRealBasisFactory(rng), rng)
 
-  def apply(alice: ActorRef, bob: ActorRef, bf: BasisFactory)(implicit rng: Generator): Ever =
-    new Ever(alice, bob, bf, rng)
+  def apply(alice: ActorRef, bob: ActorRef, bitLength: Int, bf: BasisFactory)
+           (implicit rng: Generator): Ever =
+    new Ever(alice, bob, bitLength, bf, rng)
 }
 
 trait BasisFactory{

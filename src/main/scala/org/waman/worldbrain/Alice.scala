@@ -2,7 +2,7 @@ package org.waman.worldbrain
 
 import akka.actor.Actor
 
-trait Alice[K] extends Actor with KeyContainer[K]{
+trait Alice extends Actor with KeyContainer{
 
   override def receive: Receive =
     establishKeyBehavior.orElse[Any, Unit](getKeyBehavior)

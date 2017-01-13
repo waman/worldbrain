@@ -1,31 +1,33 @@
-package org.waman.worldbrain.single.bb84
+package org.waman.worldbrain.single.b92
 
 import akka.actor.ActorRef
 import org.waman.worldbrain
-import org.waman.worldbrain.single.{BasisVector, StateBasis}
+import org.waman.worldbrain.single.StateBasis
+import org.waman.worldbrain.single.BasisVector._
 import spire.random.Generator
 
 class Eve(alice: ActorRef, bob: ActorRef, protected val bitLength: Int)
          (implicit rng: Generator)
     extends worldbrain.Eve(alice, bob){
 
-  require(bitLength > 0)
-
-  private var states: Seq[BasisVector] = _
+  private var bitString: Seq[Int] = _
 
   override val eavesdropBehavior: Receive = {
     case m: QubitMessage =>
       val qubits = m.qubits
       val bases = StateBasis.createRandomBases(rng, qubits.length)
 
-      this.states = (qubits zip bases).map{
+      this.bitString = (qubits zip bases).map{
         case (qubit, basis) => qubit.observe(basis)(rng)
+      }.map{
+        case Zero | Minus => 0
+        case One  | Plus  => 1
       }
 
       this.bob ! m
 
-    case m: BasisFilterMessage =>
-      addKeyBits(extractKey(this.states, m.filter))
+    case m: BitFilterMessage =>
+      addKeyBits(extractKey(this.bitString, m.filter))
       this.alice ! m
   }
 }

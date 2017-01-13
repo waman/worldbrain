@@ -1,19 +1,29 @@
 package org.waman.worldbrain
 
-import scala.concurrent.Promise
-
 import akka.Done
 import akka.actor.Actor
 import akka.pattern.pipe
 import org.waman.worldbrain.KeyContainer.RequestKey
 
-trait KeyContainer[K] { this: Actor =>
+import scala.concurrent.Promise
+
+trait KeyContainer{ this: Actor =>
 
   import context._
 
-  protected val keyPromise: Promise[K] = Promise()
+  protected def bitLength: Int
+  private var keyBits: Seq[Int] = _
+  protected val keyPromise: Promise[Seq[Int]] = Promise()
 
-  protected def setKey(key: K): Unit = this.keyPromise.success(key)
+  protected def addKeyBits(bits: Seq[Int]): Int = {
+    this.keyBits ++= bits
+    if(this.keyBits.length >= this.bitLength) {
+      this.keyPromise.success(this.keyBits.slice(0, this.bitLength))
+      0
+    }else{
+      this.bitLength - this.keyBits.length
+    }
+  }
 
   val getKeyBehavior: Receive = {
     case RequestKey =>
@@ -26,4 +36,7 @@ trait KeyContainer[K] { this: Actor =>
 object KeyContainer{
 
   final case object RequestKey
+
+  def applyFilter[E](seq: Seq[E], filter: Seq[Int]): Seq[E] =
+    (seq zip filter).filter(_._2 == 1).map(_._1)
 }

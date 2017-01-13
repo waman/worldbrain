@@ -3,13 +3,10 @@ package org.waman.worldbrain.single.b92
 import org.waman.worldbrain
 import org.waman.worldbrain.single.BasisVector._
 import org.waman.worldbrain.single.StateBasis._
-import org.waman.worldbrain.single.{BasisVector, StateBasis}
 import spire.random.Generator
 
-class Bob(implicit rng: Generator) extends worldbrain.Bob[Key]{
-
-  private var bases: Seq[StateBasis] = _
-  private var states: Seq[BasisVector] = _
+class Bob(protected val bitLength: Int)(implicit rng: Generator)
+    extends worldbrain.Bob{
 
   override val establishKeyBehavior: Receive = {
     case QubitMessage(qubits) =>
@@ -23,7 +20,7 @@ class Bob(implicit rng: Generator) extends worldbrain.Bob[Key]{
         }
       }
 
-      setKey(extractKey(bitString, bitFilter))
+      addKeyBits(extractKey(bitString, bitFilter))
       sender() ! BitFilterMessage(bitFilter)
   }
 }

@@ -23,17 +23,17 @@ class B92Spec extends WorldbrainCustomSpec{
       executeWith(20, 1000, "Slow")
     }
 
-    def executeWith(bitSize: Int, n: Int, postfix: String): Unit = {
+    def executeWith(bitLength: Int, n: Int, postfix: String): Unit = {
 
-      val system = ActorSystem(s"B92${postfix}System")
+      val system = ActorSystem(s"B92System")
       implicit val dispatcher: ExecutionContextExecutor = system.dispatcher
       implicit val timeout = Timeout(20 second)
 
       val lengthList: Seq[Future[Int]] = (0 until n).map{ i =>
-        val alice = system.actorOf(Props(new Alice), s"Alice$postfix$i")
-        val bob   = system.actorOf(Props(new Bob), s"Bob$postfix$i")
+        val alice = system.actorOf(Props(new Alice(bitLength)), s"Alice$postfix$i")
+        val bob   = system.actorOf(Props(new Bob(bitLength)), s"Bob$postfix$i")
 
-        alice ! EstablishKey(bob, bitSize)
+        alice ! EstablishKey(bob)
 
         val aliceKey = (alice ? RequestKey).mapTo[Seq[Int]]
         val bobKey = (bob ? RequestKey).mapTo[Seq[Int]]

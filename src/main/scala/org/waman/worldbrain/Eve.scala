@@ -2,9 +2,9 @@ package org.waman.worldbrain
 
 import akka.actor.{Actor, ActorRef}
 
-abstract class Eve[K](protected val alice: ActorRef,
+abstract class Eve(protected val alice: ActorRef,
                       protected val bob: ActorRef)
-    extends Actor with KeyContainer[K]{
+    extends Actor with KeyContainer{
 
   override def receive: Receive =
     eavesdropBehavior

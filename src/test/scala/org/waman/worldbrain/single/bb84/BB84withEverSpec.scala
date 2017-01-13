@@ -23,39 +23,36 @@ class BB84withEverSpec extends WorldbrainCustomSpec{
       execute(18, 2, "Quick", rng)
     }
 
-    "with bitLength 10 to 20, n = 1000 and random bases" in {
-      val n = 1000
-      (10 to 20).foreach{
+    "with bitLength 1 to 10, n = 1000 and random bases" in {
+      (1 to 10).foreach{
         execute(_, 1000, "Slow", rng)
       }
     }
 
-    "with bitLength 10 to 20, n = 1000 and fixed basis (theta = 0)" in {
-      val n = 1000
-      (10 to 20).foreach{
+    "with bitLength 1 to 10, n = 1000 and fixed basis (theta = 0)" in {
+      (1 to 10).foreach{
         execute(_, 1000, "theta0", new FixedBasisFactory(0.0))
       }
     }
 
-    "with bitLength 10 to 20, n = 1000 and fixed basis (theta = PI)" in {
-      val n = 1000
+    "with bitLength 1 to 10, n = 1000 and fixed basis (theta = PI)" in {
       (10 to 20).foreach{
         execute(_, 1000, "thetaPI", new FixedBasisFactory(Math.PI))
       }
     }
 
     def execute(bitLength: Int, n: Int, postfix: String, bf: BasisFactory): Unit = {
-      val system = ActorSystem(s"BB84withEver${postfix}System")
+      val system = ActorSystem(s"BB84withEverSystem")
       implicit val dispatcher: ExecutionContextExecutor = system.dispatcher
       implicit val timeout = Timeout(20 second)
 
       val successList: Seq[Future[Result]] = (0 until n).map{ i =>
-        val alice = system.actorOf(Props(new Alice), s"Alice$postfix$bitLength-$i")
-        val bob   = system.actorOf(Props(new Bob), s"Bob$postfix$bitLength-$i")
+        val alice = system.actorOf(Props(new Alice(bitLength)), s"Alice$postfix$bitLength-$i")
+        val bob   = system.actorOf(Props(new Bob(bitLength)), s"Bob$postfix$bitLength-$i")
 
-        val bobe  = system.actorOf(Props(Ever(alice, bob)), s"Ever$postfix$bitLength-$i")
+        val bobe  = system.actorOf(Props(Ever(alice, bob, bitLength)), s"Ever$postfix$bitLength-$i")
 
-        alice ! EstablishKey(bobe, bitLength)
+        alice ! EstablishKey(bobe)
 
         val aliceKey = (alice ? RequestKey).mapTo[Seq[Int]]
         val bobKey = (bob ? RequestKey).mapTo[Seq[Int]]

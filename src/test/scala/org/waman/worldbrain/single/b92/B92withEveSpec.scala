@@ -1,4 +1,4 @@
-package org.waman.worldbrain.single.bb84
+package org.waman.worldbrain.single.b92
 
 import akka.Done
 import akka.actor._
@@ -12,34 +12,38 @@ import scala.concurrent._
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-case class Result(isSuccess: Int, matchingBitCount: Int){
+case class Result(successCount: Int, length: Int, matchingBitCount: Int){
 
   def +(other: Result): Result =
-    Result(isSuccess+other.isSuccess, matchingBitCount+other.matchingBitCount)
+    Result(
+      successCount + other.successCount,
+      length + other.length,
+      matchingBitCount + other.matchingBitCount)
 
   def toString(n: Int, bitLength: Int): String = {
-    s"""$bitLength: ${1.0 - isSuccess.toFloat / n}
-       |    ${matchingBitCount.toFloat / isSuccess}""".stripMargin
+    s"""$bitLength: ${1.0 - successCount.toFloat / n}
+       |    ${length.toFloat / successCount}
+       |    ${matchingBitCount.toFloat / successCount}""".stripMargin
   }
 }
 
 class BB84withEveSpec extends WorldbrainCustomSpec{
 
-  "Emulate BB84 with Eve" - {
+  "Emulate B92 with Eve" - {
 
     "with bitLength = 18, n = 2" in {
       execute(18, 2, "Quick")
     }
 
     "with bitLength = 1 to 10, n = 1000" in {
-      (1 to 10).foreach {
-        execute(_, 1000, "Slow")
+      (1 to 10).foreach{ i =>
+        execute(i, 1000, "Slow")
       }
     }
 
     def execute(bitLength: Int, n: Int, postfix: String): Unit = {
 
-      val system = ActorSystem(s"BB84withEveSystem")
+      val system = ActorSystem(s"B92withEveSystem")
       implicit val dispatcher: ExecutionContextExecutor = system.dispatcher
       implicit val timeout = Timeout(20 second)
 
@@ -58,9 +62,9 @@ class BB84withEveSpec extends WorldbrainCustomSpec{
         Future.sequence(Seq(aliceKey, bobKey, eveKey)).map{
           case aKey +: bKey +: eKey +: _ =>
             val result = if(aKey.nonEmpty && aKey == bKey){
-              Result(1, (aKey zip eKey).count(p => p._1 == p._2))
+              Result(1, aKey.length, (aKey zip eKey).count(p => p._1 == p._2))
             } else{
-              Result(0, 0)
+              Result(0, 0, 0)
             }
 
             alice ! Done
