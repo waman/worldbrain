@@ -1,9 +1,9 @@
 package org.waman.worldbrain
 
-import scala.language.implicitConversions
-
 import spire.algebra.{Field, Semiring, Trig}
 import spire.math.Complex
+
+import scala.language.implicitConversions
 
 object ComplexImplicits {
 

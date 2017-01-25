@@ -1,8 +1,8 @@
 name := "worldbrain"
 
-version := "0.1"
+version := "0.2"
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.12.1"
 
 //***** Custom settings *****
 val javaVersion = settingKey[String]("javac source/target version")
@@ -29,10 +29,10 @@ scalacOptions ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka" % "akka-actor_2.11" % "2.4.16",
-  "org.spire-math" % "spire_2.11" % "0.13.0",
-  "org.waman" % "scalatest-util" % "0.7" % "test",
-  "org.scalafx" % "scalafx_2.11" % "8.0.102-R11" % "test"
+  "com.typesafe.akka" % "akka-actor_2.12" % "2.4.16",
+  "org.spire-math" % "spire_2.12" % "0.13.0",
+  "org.waman" % "scalatest-util" % "0.8" % "test",
+  "org.scalafx" % "scalafx_2.12" % "8.0.102-R11" % "test"
 )
 
 fork in Global := true
