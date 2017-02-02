@@ -3,7 +3,7 @@ package org.waman.worldbrain.qkd.bb84
 import akka.actor.ActorRef
 import org.waman.worldbrain.qkd
 import org.waman.worldbrain.qkd.KeyContainer._
-import org.waman.worldbrain.system.single.{BasisKet, StateBasis}
+import org.waman.worldbrain.system.single.{StateVector, StateBasis}
 import spire.random.Generator
 
 class Ever private(alice: ActorRef, bob: ActorRef, val keyLength: Int,
@@ -51,17 +51,17 @@ trait BasisFactory{
 }
 
 class FixedBasisFactory(theta: Double, phi: Double = 0.0) extends BasisFactory{
-  val basis: StateBasis = BasisKet.getBasis(BasisKet.ofBlochSphere(theta, phi))
+  val basis: StateBasis = StateVector.getBasis(StateVector.ofBlochSphere(theta, phi))
 
   override def createBasis = basis
 }
 
 class RandomInRealBasisFactory(rng: Generator) extends BasisFactory{
   override def createBasis =
-    BasisKet.getBasis(BasisKet.newRandomVectorInReal(rng))
+    StateVector.getBasis(StateVector.newRandomVectorInReal(rng))
 }
 
 class RandomBasisFactory(rng: Generator) extends BasisFactory{
   override def createBasis =
-      BasisKet.getBasis(BasisKet.newRandomVector(rng))
+      StateVector.getBasis(StateVector.newRandomVector(rng))
 }

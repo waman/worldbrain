@@ -5,7 +5,7 @@ import akka.pattern._
 import org.waman.worldbrain.Protocol.EstablishKey
 import org.waman.worldbrain.qkd
 import org.waman.worldbrain.qkd.Alice.RequestLog
-import org.waman.worldbrain.system.single.BasisKet._
+import org.waman.worldbrain.system.single.StateVector._
 import org.waman.worldbrain.system.single._
 import spire.random.Generator
 
@@ -14,11 +14,11 @@ import scala.concurrent.Promise
 class Alice(val keyLength: Int, n0: Int, n1: Int, rng: Generator)
     extends qkd.Alice{
 
-  private var states: Seq[BasisKet] = _
+  private var states: Seq[StateVector] = _
 
   //***** LOG *****
   private var createdQubitCount: Int = 0
-  private var createdQubits: Seq[BasisKet] = Seq()
+  private var createdQubits: Seq[StateVector] = Seq()
   private var currentFilter: Seq[Int] = Seq()
   private var usedQubitCount: Int = 0
   private val logPromise: Promise[Map[String, Any]] = Promise()
@@ -29,7 +29,7 @@ class Alice(val keyLength: Int, n0: Int, n1: Int, rng: Generator)
       sendQubits(bob, n0)
 
     case RequestCorrectBases =>
-      val bases = this.states.map(BasisKet.getBasis).map(encode)
+      val bases = this.states.map(StateVector.getBasis).map(encode)
       sender() ! CorrectBasisMessage(bases)
 
     case BasisFilterMessage(filter) =>
@@ -50,7 +50,7 @@ class Alice(val keyLength: Int, n0: Int, n1: Int, rng: Generator)
         case x if x > 0 => sendQubits(sender(), n1)
         case _ =>
           //***** LOG *****
-          val s = this.createdQubits.map(BasisKet.toSymbol).mkString
+          val s = this.createdQubits.map(_.symbol).mkString
           this.logPromise.success(
             Map(
               "keyLength        " -> this.keyLength,

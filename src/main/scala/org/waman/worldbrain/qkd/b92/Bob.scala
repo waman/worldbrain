@@ -1,7 +1,7 @@
 package org.waman.worldbrain.qkd.b92
 
 import org.waman.worldbrain.qkd
-import org.waman.worldbrain.system.single.BasisKet._
+import org.waman.worldbrain.system.single.StateVector._
 import org.waman.worldbrain.system.single.StateBasis._
 import spire.random.Generator
 

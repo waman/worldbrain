@@ -1,12 +1,11 @@
 package org.waman.worldbrain.system.single
 
-import org.waman.worldbrain.ComplexImplicits._
 import org.waman.worldbrain.WorldbrainCustomSpec
+import org.waman.worldbrain.system.Tolerance
+import org.waman.worldbrain.system.single.StateVector._
 import spire.implicits._
 import spire.math.Complex
 import spire.math.Complex.i
-import org.waman.worldbrain.system.single.BasisKet._
-import org.waman.worldbrain.system.Tolerance
 
 class BasisVectorSpec extends WorldbrainCustomSpec{
 
@@ -35,7 +34,7 @@ class BasisVectorSpec extends WorldbrainCustomSpec{
         (PlusImaginary, MinusImaginary, 0.0)
       )
 
-      forAll(conversions) { (v0: BasisKet, v1: BasisKet, expected: Double) =>
+      forAll(conversions) { (v0: StateVector, v1: StateVector, expected: Double) =>
         __Exercise__
         val sut = v0 probability v1
         __Verify__
@@ -45,31 +44,6 @@ class BasisVectorSpec extends WorldbrainCustomSpec{
   }
 
   "Type conversion methods" - {
-
-    "canonical method should" - {
-
-      "change global phase of this BasisVector so that a (coefficient of |0>) be real" in {
-        val conversions = Table(
-          ("v", "expected"),
-          (BasisKet(1, 0), BasisKet(1, 0)),
-          (BasisKet(-1, 0), BasisKet(1, 0)),
-          (BasisKet(i, 0), BasisKet(1, 0)),
-
-          (BasisKet(0, 1), BasisKet(0, 1)),
-          (BasisKet(0, -1), BasisKet(0, 1)),
-          (BasisKet(0, i), BasisKet(0, 1)),
-
-          (BasisKet(i/sqrt2, 1/sqrt2), BasisKet(1/sqrt2, -i/sqrt2))
-        )
-
-        forAll(conversions){ (v: BasisKet, expected: BasisKet) =>
-          __Exercise__
-          val sut = v.canonical
-          __Verify__
-          assert( sut hasTheSameCoefficientsAs expected )
-        }
-      }
-    }
 
     "toAnglesOfBlochSphere method should" - {
 
@@ -84,7 +58,7 @@ class BasisVectorSpec extends WorldbrainCustomSpec{
           (MinusImaginary, (Math.PI/2, Math.PI*3/2))
         )
 
-        forAll(conversions){ (v: BasisKet, expected: (Double, Double)) =>
+        forAll(conversions){ (v: StateVector, expected: (Double, Double)) =>
           val sut = v.toAnglesOfBlochSphere
           sut._1 should equal (expected._1 +- error)
           sut._2 should equal (expected._2 +- error)
@@ -105,7 +79,7 @@ class BasisVectorSpec extends WorldbrainCustomSpec{
           (MinusImaginary, (0.0, -1.0, 0.0))
         )
 
-        forAll(conversions){ (v: BasisKet, expected: (Double, Double, Double)) =>
+        forAll(conversions){ (v: StateVector, expected: (Double, Double, Double)) =>
           val sut = v.toPointOnBlochSphere
           sut._1 should equal (expected._1 +- error)
           sut._2 should equal (expected._2 +- error)
@@ -122,11 +96,11 @@ class BasisVectorSpec extends WorldbrainCustomSpec{
           (One, Complex(0.0)),
           (Plus, Complex(1.0)),
           (Minus, Complex(-1.0)),
-          (PlusImaginary, i),
-          (MinusImaginary, -i)
+          (PlusImaginary, i[Double]),
+          (MinusImaginary, -i[Double])
         )
 
-        forAll(conversions){ (v: BasisKet, expected: Complex[Double]) =>
+        forAll(conversions){ (v: StateVector, expected: Complex[Double]) =>
           __Exercise__
           val sut = v.toComplex
           __Verify__
@@ -156,9 +130,9 @@ class BasisVectorSpec extends WorldbrainCustomSpec{
           (Math.PI/2, Plus)
         )
 
-        forAll(conversions){ (theta: Double, expected: BasisKet) =>
+        forAll(conversions){ (theta: Double, expected: StateVector) =>
           __Exercise__
-          val sut = BasisKet.ofBlochSphere(theta)
+          val sut = StateVector.ofBlochSphere(theta)
           __Verify__
           assert( sut hasTheSameCoefficientsAs expected )
         }
@@ -175,9 +149,9 @@ class BasisVectorSpec extends WorldbrainCustomSpec{
           (Math.PI/2, 3*Math.PI/2, MinusImaginary)
         )
 
-        forAll(conversions){ (theta: Double, phi: Double, expected: BasisKet) =>
+        forAll(conversions){ (theta: Double, phi: Double, expected: StateVector) =>
           __Exercise__
-          val sut = BasisKet.ofBlochSphere(theta, phi)
+          val sut = StateVector.ofBlochSphere(theta, phi)
           __Verify__
           assert( sut hasTheSameCoefficientsAs expected )
         }

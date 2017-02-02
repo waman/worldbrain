@@ -2,8 +2,7 @@ package org.waman.worldbrain.qkd.b92
 
 import akka.actor.ActorRef
 import org.waman.worldbrain.qkd
-import org.waman.worldbrain.system.single.StateBasis
-import org.waman.worldbrain.system.single.BasisKet._
+import org.waman.worldbrain.system.single.StateVector._
 import spire.random.Generator
 
 class Eve(alice: ActorRef, bob: ActorRef, val keyLength: Int)
@@ -15,7 +14,7 @@ class Eve(alice: ActorRef, bob: ActorRef, val keyLength: Int)
   override val eavesdropBehavior: Receive = {
     case m: QubitMessage =>
       val qubits = m.qubits
-      val bases = StateBasis.createRandomBases(rng, qubits.length)
+      val bases = createRandomBases(rng, qubits.length)
 
       this.bitString = (qubits zip bases).map{
         case (qubit, basis) => qubit.observe(basis)(rng)
