@@ -1,7 +1,6 @@
 package org.waman.worldbrain.system.single
 
-import scala.math._
-import spire.math.Complex
+import spire.math._
 import spire.implicits._
 import spire.random.Generator
 import org.waman.worldbrain.system.single.StateBasis._
@@ -10,7 +9,9 @@ import org.waman.worldbrain.ComplexImplicits._
 
 class StateVector private(val a: Double, val b: Complex[Double]){
 
-  require(StateVector.normalizationTolerance.test(a*a + b.conjugate*b, 1))
+  import StateVector.normTolerance
+  require(a >= 0, s"$a must be zero or positive")
+  require(normTolerance.test(a*a + b.conjugate*b, 1), "The norm must be 1")
 
   def *(that: StateVector): Complex[Double] =
     this.a * that.a + this.b.conjugate * that.b  // a is real
@@ -64,7 +65,7 @@ class StateVector private(val a: Double, val b: Complex[Double]){
 
 object StateVector {
 
-  private[StateVector] val normalizationTolerance = Tolerance(1e-10)
+  private[StateVector] val normTolerance = Tolerance(1e-10)
 
   def normalized(a: Complex[Double], b: Complex[Double]): StateVector = {
     val norm = (a.conjugate * a + b.conjugate * b).sqrt
