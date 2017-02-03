@@ -3,10 +3,10 @@ package org.waman.worldbrain.qkd.bb84
 import akka.actor._
 import akka.pattern.ask
 import akka.util.Timeout
-import org.waman.worldbrain.qkd.Alice.RequestLog
-import org.waman.worldbrain.qkd.KeyContainer.RequestKey
-import org.waman.worldbrain.WorldbrainCustomSpec
 import org.waman.worldbrain.Protocol.EstablishKey
+import org.waman.worldbrain.WorldbrainCustomSpec
+import org.waman.worldbrain.qkd.KeyContainer.RequestKey
+import org.waman.worldbrain.qkd.bb84.LoggingAlice.RequestLog
 
 import scala.concurrent._
 import scala.concurrent.duration._
@@ -63,7 +63,7 @@ class BB84Spec extends WorldbrainCustomSpec{
 
     val keyLength = 18
 
-    val alice = system.actorOf(Props(Alice(keyLength, 10, 5)), s"Alice")
+    val alice = system.actorOf(Props(LoggingAlice(keyLength, 10, 5)), s"Alice")
     val bob   = system.actorOf(Props(new Bob(keyLength)), s"Bob")
 
     alice ! EstablishKey(bob)

@@ -11,10 +11,10 @@ class StateVector private(val a: Double, val b: Complex[Double]){
 
   import StateVector.normTolerance
   require(a >= 0, s"$a must be zero or positive")
-  require(normTolerance.test(a*a + b.conjugate*b, 1), "The norm must be 1")
+  require(normTolerance.test(a*a + (~b)*b, 1), "The norm must be 1")
 
   def *(that: StateVector): Complex[Double] =
-    this.a * that.a + this.b.conjugate * that.b  // a is real
+    a * that.a + ~b * that.b  // a is real
 
   def probability(that: StateVector): Double = {
     val amplitude = (this * that).abs
@@ -68,7 +68,7 @@ object StateVector {
   private[StateVector] val normTolerance = Tolerance(1e-10)
 
   def normalized(a: Complex[Double], b: Complex[Double]): StateVector = {
-    val norm = (a.conjugate * a + b.conjugate * b).sqrt
+    val norm = (~a*a + ~b*b).sqrt
     apply(a/norm, b/norm)
   }
 
