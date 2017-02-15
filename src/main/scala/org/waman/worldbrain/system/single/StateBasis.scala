@@ -1,13 +1,16 @@
 package org.waman.worldbrain.system.single
 
-import org.waman.worldbrain.system.single.StateVector._
+import org.waman.worldbrain.system
+import spire.math.Fractional
 
-case class StateBasis(states: Seq[StateVector])
+class StateBasis[A: Fractional](states: Seq[BasisVector[A]])
+    extends system.StateBasis(states){
+}
 
 object StateBasis{
-  def apply(v0: StateVector, v1: StateVector): StateBasis = apply(Seq(v0, v1))
+  def apply[A: Fractional](v0: BasisVector[A], v1: BasisVector[A]): StateBasis[A] =
+    new StateBasis(Seq(v0, v1))
 
-  object Standard extends StateBasis(Seq(Zero, One))
-  object Hadamard extends StateBasis(Seq(Plus, Minus))
-  object Imaginary extends StateBasis(Seq(PlusImaginary, MinusImaginary))
+  def apply[A: Fractional](state: BasisVector[A]): StateBasis[A] =
+    StateBasis(state, state.getPerpendicular)
 }

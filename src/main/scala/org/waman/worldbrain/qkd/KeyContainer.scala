@@ -3,7 +3,7 @@ package org.waman.worldbrain.qkd
 import akka.Done
 import akka.actor.Actor
 import akka.pattern.pipe
-import org.waman.worldbrain.qkd.KeyContainer.RequestKey
+import org.waman.worldbrain.qkd.QkdProtocol.RequestKey
 
 import scala.concurrent.Promise
 
@@ -34,12 +34,4 @@ trait KeyContainer{ this: Actor =>
     case Done =>
       context stop self
   }
-}
-
-object KeyContainer{
-
-  case object RequestKey
-
-  def applyFilter[E](seq: Seq[E], filter: Seq[Int]): Seq[E] =
-    (seq zip filter).filter(_._2 == 1).map(_._1)
 }

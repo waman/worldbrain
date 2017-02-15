@@ -2,24 +2,23 @@ package org.waman.worldbrain.qkd.bb84
 
 import akka.actor.ActorRef
 import org.waman.worldbrain.qkd
-import org.waman.worldbrain.qkd.KeyContainer._
-import org.waman.worldbrain.system.single.{StateVector, StateBasis}
+import spire.math.Fractional
 import spire.random.Generator
+import org.waman.worldbrain.qkd._
+import org.waman.worldbrain.system.single.{StateBasis, BasisVector}
+import spire.algebra.Trig
 
-class Ever private(alice: ActorRef, bob: ActorRef, val keyLength: Int,
-                   basisFactory: BasisFactory, rng: Generator)
+class Ever[A] private (alice: ActorRef, bob: ActorRef, val keyLength: Int, rng: Generator)
+                      (implicit a: Fractional[A], trig: Trig[A])
     extends qkd.Eve(alice, bob){
-
-  require(keyLength > 0)
 
   private var bits: Seq[Int] = _
 
   override val eavesdropBehavior: Receive = {
-    case m: QubitMessage =>
-      val qubits = m.qubits
-      val bases = basisFactory.createBases(qubits.length)
+    case m: QubitMessage[A] =>
+      val bases = createRandomBases(m.qubits.length)
 
-      this.bits = (qubits zip bases).map{
+      this.bits = (m.qubits zip bases).map{
         case (qubit, basis) =>
           val state = qubit.observe(basis)(rng)
           if(state == basis.states.head) 0 else 1
@@ -31,37 +30,17 @@ class Ever private(alice: ActorRef, bob: ActorRef, val keyLength: Int,
       addKeyBits(applyFilter(this.bits, m.filter))
       this.alice ! m
   }
+
+  private def createRandomBases(n: Int): Seq[StateBasis[A]] = {
+    Seq.fill(n)(BasisVector.newRandomVectorInReal(rng)(a, trig))
+      .map(StateBasis(_)(a))
+  }
 }
 
-object Ever{
+object Ever {
 
-  def apply(alice: ActorRef, bob: ActorRef, bitLength: Int)(implicit rng: Generator): Ever =
-    new Ever(alice, bob, bitLength, new RandomInRealBasisFactory(rng), rng)
-
-  def apply(alice: ActorRef, bob: ActorRef, bitLength: Int, bf: BasisFactory)
-           (implicit rng: Generator): Ever =
-    new Ever(alice, bob, bitLength, bf, rng)
-}
-
-trait BasisFactory{
-  def createBases(n: Int): Seq[StateBasis] =
-    (0 until n).map(_ => createBasis)
-
-  def createBasis: StateBasis
-}
-
-class FixedBasisFactory(theta: Double, phi: Double = 0.0) extends BasisFactory{
-  val basis: StateBasis = StateVector.getBasis(StateVector.ofBlochSphere(theta, phi))
-
-  override def createBasis = basis
-}
-
-class RandomInRealBasisFactory(rng: Generator) extends BasisFactory{
-  override def createBasis =
-    StateVector.getBasis(StateVector.newRandomVectorInReal(rng))
-}
-
-class RandomBasisFactory(rng: Generator) extends BasisFactory{
-  override def createBasis =
-      StateVector.getBasis(StateVector.newRandomVector(rng))
+  def apply[A](alice: ActorRef, bob: ActorRef, keyLength: Int, rng: Generator = Generator.rng)
+              (implicit a: Fractional[A], trig: Trig[A]): Ever[A] = {
+    new Ever(alice, bob, keyLength, rng)(a, trig)
+  }
 }

@@ -1,16 +1,18 @@
 package org.waman.worldbrain.qkd.b92
 
-import akka.actor.ActorRef
+import akka.actor.{Actor, ActorRef}
 import org.waman.worldbrain.qkd
-import org.waman.worldbrain.Protocol.EstablishKey
-import org.waman.worldbrain.system.single.StateVector._
-import org.waman.worldbrain.system.single.Qubit
+import org.waman.worldbrain.qkd.AliceFactory
+import org.waman.worldbrain.qkd.QkdProtocol.EstablishKey
+import org.waman.worldbrain.system.single.{Qubit, StateBasis, StateSpace}
+import spire.math._
 import spire.random.Generator
 
-class Alice(val keyLength: Int)(implicit rng: Generator)
-  extends qkd.Alice{
-
-  require(keyLength > 0)
+class Alice[A: Fractional] private (val keyLength: Int,
+                                    protected val bases: Seq[StateBasis[A]],
+                                    nChunk: Int,
+                                    rng: Generator)
+    extends qkd.Alice with StateAlias[A]{
 
   private var bitString: Seq[Int] = _
 
@@ -26,13 +28,20 @@ class Alice(val keyLength: Int)(implicit rng: Generator)
   }
 
   private def sendQubits(bob: ActorRef): Unit = {
-    this.bitString = createRandomBitString(this.keyLength, rng)
+    this.bitString = createRandomBitString(nChunk)(rng)
 
     val qubits = this.bitString.map{
-      case 0 => Zero
-      case 1 => Plus
+      case 0 => zero
+      case 1 => plus
     }.map(new Qubit(_))
 
     bob ! QubitMessage(qubits)
   }
+}
+
+object Alice extends AliceFactory{
+
+  override protected def newAlice[A](keyLength: Int, bases: Seq[StateBasis[A]], nChunk: Int,
+                                     rng: Generator, a: Fractional[A]): Alice[A] =
+    new Alice(keyLength, bases, nChunk, rng)(a)
 }

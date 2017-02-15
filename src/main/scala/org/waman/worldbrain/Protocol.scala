@@ -1,12 +1,13 @@
 package org.waman.worldbrain
 
-import akka.actor.ActorRef
-import org.waman.worldbrain.system.single.Qubit
+import org.waman.worldbrain.system.Qubit
 
 object Protocol {
 
-  case class EstablishKey(bob: ActorRef)
   class ClassicalBitMessage(val bits: Seq[Int])
-  class QubitMessage(qubits: Seq[Qubit])
+
+  /** This class may be extended by case class*/
+  class QubitMessage[Q <: Qubit[_, _]](qubits: Seq[Q])
+
   trait Request
 }

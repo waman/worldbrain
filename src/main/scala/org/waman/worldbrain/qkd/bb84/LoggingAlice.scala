@@ -1,17 +1,22 @@
 package org.waman.worldbrain.qkd.bb84
 
+import akka.actor.Actor
 import akka.pattern.pipe
-import org.waman.worldbrain.qkd.bb84.LoggingAlice.RequestLog
-import org.waman.worldbrain.system.single.StateVector
+import org.waman.worldbrain.qkd.AliceFactory
+import org.waman.worldbrain.system.single.{BasisVector, StateBasis, StateSpace}
+import spire.math.Fractional
 import spire.random.Generator
 
 import scala.concurrent.Promise
 
-class LoggingAlice(keyLength: Int, n0: Int, n1: Int, rng: Generator)
-    extends Alice(keyLength, n0, n1, rng){
+class LoggingAlice[A: Fractional] private(keyLength: Int,
+                                          bases: Seq[StateBasis[A]],
+                                          nChunk: Int,
+                                          rng: Generator)
+    extends Alice[A](keyLength, bases, nChunk, rng){
 
   private var createdQubitCount: Int = 0
-  private var createdQubits: Seq[StateVector] = Seq()
+  private var createdQubits: Seq[BasisVector[A]] = Seq()
   private var currentFilter: Seq[Int] = Seq()
   private var usedQubitCount: Int = 0
   private val logPromise: Promise[Map[String, Any]] = Promise()
@@ -26,7 +31,7 @@ class LoggingAlice(keyLength: Int, n0: Int, n1: Int, rng: Generator)
       pipe(logPromise.future) to sender()
   }
 
-  override protected def qubitsCreated(states: Seq[StateVector]) = {
+  override protected def qubitsCreated(states: Seq[BasisVector[A]]): Unit = {
     this.createdQubits ++= states
     this.createdQubitCount += states.length
   }
@@ -46,7 +51,13 @@ class LoggingAlice(keyLength: Int, n0: Int, n1: Int, rng: Generator)
   }
 
   override protected def keyEstablished() = {
-    val s = this.createdQubits.map(_.symbol).mkString
+    val s = this.createdQubits.map{
+      case v if v == zero  => "0"
+      case v if v == one   => "1"
+      case v if v == plus  => "+"
+      case v if v == minus => "-"
+    }.mkString
+
     this.logPromise.success(
       Map(
         "keyLength        " -> this.keyLength,
@@ -60,19 +71,12 @@ class LoggingAlice(keyLength: Int, n0: Int, n1: Int, rng: Generator)
   }
 }
 
-object LoggingAlice {
+object LoggingAlice extends AliceFactory{
 
-  case object RequestLog
-
-  def apply(keyLength: Int,
-            n0: Int = -1,
-            n1: Int = -1,
-            rng: Generator = Generator.rng): LoggingAlice = {
-    new LoggingAlice(
-      keyLength,
-      if(n0 > 0) n0 else keyLength,
-      if(n1 > 0) n1 else keyLength,
-      rng
-    )
-  }
+  override protected def newAlice[A](keyLength: Int,
+                                     bases: Seq[StateBasis[A]],
+                                     nChunk: Int,
+                                     rng: Generator,
+                                     a: Fractional[A]): LoggingAlice[A] =
+    new LoggingAlice(keyLength, bases, nChunk, rng)(a)
 }
