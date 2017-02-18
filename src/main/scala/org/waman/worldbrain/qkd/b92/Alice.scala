@@ -33,7 +33,7 @@ class Alice[A: Fractional] private (val keyLength: Int,
     val qubits = this.bitString.map{
       case 0 => zero
       case 1 => plus
-    }.map(new Qubit(_))
+    }.map(Qubit(_))
 
     bob ! QubitMessage(qubits)
   }

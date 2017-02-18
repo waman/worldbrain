@@ -2,7 +2,7 @@ package org.waman.worldbrain.qkd.bb84
 
 import org.waman.worldbrain.qkd.applyFilter
 import org.waman.worldbrain.system.single.toy.StateBasis._
-import org.waman.worldbrain.system.single.toy.BasisVector._
+import org.waman.worldbrain.system.single.toy.StateVector._
 import org.waman.worldbrain.system.single.toy._
 import spire.random.Generator
 
@@ -14,15 +14,15 @@ package object toy {
       else                 Hadamard
     }
 
-  def extractKey(states: Seq[BasisVector], filter: Seq[Int]): Seq[Int] =
+  def extractKey(states: Seq[StateVector], filter: Seq[Int]): Seq[Int] =
     applyFilter(states, filter).map(encode)
 
-  def encode(state: BasisVector): Int = state match {
+  def encode(state: StateVector): Int = state match {
     case Zero | Plus => 0
     case One  | Minus => 1
   }
 
-  def decode(bit: Int, basis: StateBasis): BasisVector =
+  def decode(bit: Int, basis: StateBasis): StateVector =
     basis match {
       case Standard => if(bit == 0) Zero else One
       case Hadamard => if(bit == 0) Plus else Minus

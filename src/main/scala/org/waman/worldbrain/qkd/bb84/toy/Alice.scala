@@ -4,14 +4,14 @@ import akka.actor.ActorRef
 import org.waman.worldbrain.qkd
 import org.waman.worldbrain.qkd.FixedBasesAliceFactory
 import org.waman.worldbrain.qkd.QkdProtocol.EstablishKey
-import org.waman.worldbrain.system.single.toy.BasisVector._
-import org.waman.worldbrain.system.single.toy.{BasisVector, Qubit}
+import org.waman.worldbrain.system.single.toy.StateVector._
+import org.waman.worldbrain.system.single.toy.{StateVector, Qubit}
 import spire.random.Generator
 
 class Alice private (val keyLength: Int, nChunk: Int, rng: Generator)
     extends qkd.Alice with StateEncoder{
 
-  private var states: Seq[BasisVector] = _
+  private var states: Seq[StateVector] = _
 
   override def establishKeyBehavior: Receive = {
     case EstablishKey(bob) =>
@@ -43,7 +43,7 @@ class Alice private (val keyLength: Int, nChunk: Int, rng: Generator)
   }
 
   /** For logging */
-  protected def qubitsCreated(states: Seq[BasisVector]): Unit = {}
+  protected def qubitsCreated(states: Seq[StateVector]): Unit = {}
 
   /** For logging */
   protected def sendBasisFilterMessage(filter: Seq[Int]): Unit = {

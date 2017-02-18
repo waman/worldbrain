@@ -2,7 +2,7 @@ package org.waman.worldbrain.qkd.bb84
 
 import akka.actor.ActorRef
 import org.waman.worldbrain.qkd
-import org.waman.worldbrain.system.single.{StateBasis, StateSpace, BasisVector}
+import org.waman.worldbrain.system.single.{StateBasis, StateSpace, StateVector}
 import spire.random.Generator
 
 class Eve[A: Fractional] private (alice: ActorRef, bob: ActorRef,
@@ -11,7 +11,7 @@ class Eve[A: Fractional] private (alice: ActorRef, bob: ActorRef,
                                   rng: Generator)
     extends qkd.Eve(alice, bob) with StateEncoder[A]{
 
-  private var states: Seq[BasisVector[A]] = _
+  private var states: Seq[StateVector[A]] = _
 
   override val eavesdropBehavior: Receive = {
     case m: QubitMessage[A] =>

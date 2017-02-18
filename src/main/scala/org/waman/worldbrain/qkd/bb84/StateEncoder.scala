@@ -1,12 +1,12 @@
 package org.waman.worldbrain.qkd.bb84
 
 import org.waman.worldbrain.qkd.applyFilter
-import org.waman.worldbrain.system.single.{StateBasis, StateAlias, BasisVector}
+import org.waman.worldbrain.system.single.{StateBasis, StateAlias, StateVector}
 import spire.random.Generator
 
 trait StateEncoder[A] extends StateAlias[A]{
 
-  def getBasis(state: BasisVector[A]): StateBasis[A] =
+  def getBasis(state: StateVector[A]): StateBasis[A] =
     if(standard.contains(state))
       standard
     else
@@ -15,16 +15,16 @@ trait StateEncoder[A] extends StateAlias[A]{
   def createRandomBases(n: Int)(implicit rng: Generator): Seq[StateBasis[A]] =
     (0 until n).map(_ => rng.chooseFromSeq(bases))
 
-  def extractKey(states: Seq[BasisVector[A]], filter: Seq[Int]): Seq[Int] =
+  def extractKey(states: Seq[StateVector[A]], filter: Seq[Int]): Seq[Int] =
     applyFilter(states, filter).map(encodeState)
 
-  def encodeState(state: BasisVector[A]): Int =
+  def encodeState(state: StateVector[A]): Int =
     state match {
       case s if s == zero || s == plus  => 0
       case s if s == one  || s == minus => 1
     }
 
-  def decodeState(bit: Int, basis: StateBasis[A]): BasisVector[A] = basis.states(bit)
+  def decodeState(bit: Int, basis: StateBasis[A]): StateVector[A] = basis.states(bit)
 
   def encodeBasis(basis: StateBasis[A]): Int =
     basis match {

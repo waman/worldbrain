@@ -5,7 +5,7 @@ import org.waman.worldbrain.qkd
 import spire.math.Fractional
 import spire.random.Generator
 import org.waman.worldbrain.qkd._
-import org.waman.worldbrain.system.single.{StateBasis, BasisVector}
+import org.waman.worldbrain.system.single.{StateBasis, StateVector}
 import spire.algebra.Trig
 
 class Ever[A] private (alice: ActorRef, bob: ActorRef, val keyLength: Int, rng: Generator)
@@ -32,7 +32,7 @@ class Ever[A] private (alice: ActorRef, bob: ActorRef, val keyLength: Int, rng: 
   }
 
   private def createRandomBases(n: Int): Seq[StateBasis[A]] = {
-    Seq.fill(n)(BasisVector.newRandomVectorInReal(rng)(a, trig))
+    Seq.fill(n)(StateVector.newRandomVectorInReal(rng))
       .map(StateBasis(_)(a))
   }
 }

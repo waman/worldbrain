@@ -3,7 +3,7 @@ package org.waman.worldbrain.qkd.bb84
 import akka.actor.Actor
 import akka.pattern.pipe
 import org.waman.worldbrain.qkd.AliceFactory
-import org.waman.worldbrain.system.single.{BasisVector, StateBasis, StateSpace}
+import org.waman.worldbrain.system.single.{StateVector, StateBasis, StateSpace}
 import spire.math.Fractional
 import spire.random.Generator
 
@@ -16,7 +16,7 @@ class LoggingAlice[A: Fractional] private(keyLength: Int,
     extends Alice[A](keyLength, bases, nChunk, rng){
 
   private var createdQubitCount: Int = 0
-  private var createdQubits: Seq[BasisVector[A]] = Seq()
+  private var createdQubits: Seq[StateVector[A]] = Seq()
   private var currentFilter: Seq[Int] = Seq()
   private var usedQubitCount: Int = 0
   private val logPromise: Promise[Map[String, Any]] = Promise()
@@ -31,7 +31,7 @@ class LoggingAlice[A: Fractional] private(keyLength: Int,
       pipe(logPromise.future) to sender()
   }
 
-  override protected def qubitsCreated(states: Seq[BasisVector[A]]): Unit = {
+  override protected def qubitsCreated(states: Seq[StateVector[A]]): Unit = {
     this.createdQubits ++= states
     this.createdQubitCount += states.length
   }

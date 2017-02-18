@@ -2,13 +2,13 @@ package org.waman.worldbrain.qkd.bb84.toy
 
 import org.waman.worldbrain.qkd.applyFilter
 import org.waman.worldbrain.system.single.toy.StateBasis._
-import org.waman.worldbrain.system.single.toy.BasisVector._
-import org.waman.worldbrain.system.single.toy.{StateBasis, BasisVector}
+import org.waman.worldbrain.system.single.toy.StateVector._
+import org.waman.worldbrain.system.single.toy.{StateBasis, StateVector}
 import spire.random.Generator
 
 trait StateEncoder{
 
-  def getBasis(state: BasisVector): StateBasis =
+  def getBasis(state: StateVector): StateBasis =
     state match {
       case Zero | One   => Standard
       case Plus | Minus => Hadamard
@@ -22,16 +22,16 @@ trait StateEncoder{
         StateBasis.Hadamard
     }
 
-  def extractKey(states: Seq[BasisVector], filter: Seq[Int]): Seq[Int] =
+  def extractKey(states: Seq[StateVector], filter: Seq[Int]): Seq[Int] =
     applyFilter(states, filter).map(encodeState)
 
-  def encodeState(state: BasisVector): Int =
+  def encodeState(state: StateVector): Int =
     state match {
       case Zero | Plus  => 0
       case One  | Minus => 1
     }
 
-  def decodeState(bit: Int, basis: StateBasis): BasisVector = basis.states(bit)
+  def decodeState(bit: Int, basis: StateBasis): StateVector = basis.states(bit)
 
   def encodeBasis(basis: StateBasis): Int =
     basis match {

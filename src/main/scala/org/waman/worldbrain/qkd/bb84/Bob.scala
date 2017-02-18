@@ -2,7 +2,7 @@ package org.waman.worldbrain.qkd.bb84
 
 import org.waman.worldbrain.qkd
 import org.waman.worldbrain.qkd.BobFactory
-import org.waman.worldbrain.system.single.{BasisVector, StateBasis}
+import org.waman.worldbrain.system.single.{StateVector, StateBasis}
 import spire.math.Fractional
 import spire.random.Generator
 
@@ -12,7 +12,7 @@ class Bob[A: Fractional] private (val keyLength: Int,
     extends qkd.Bob with StateEncoder[A]{
 
   private var basisSeq: Seq[StateBasis[A]] = _
-  private var stateSeq: Seq[BasisVector[A]] = _
+  private var stateSeq: Seq[StateVector[A]] = _
 
   override val establishKeyBehavior: Receive = {
     case m: QubitMessage[A] =>

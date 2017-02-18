@@ -2,14 +2,14 @@ package org.waman.worldbrain.qkd.bb84.toy
 
 import org.waman.worldbrain.qkd
 import org.waman.worldbrain.qkd.FixedBasesBobFactory
-import org.waman.worldbrain.system.single.toy.{BasisVector, StateBasis}
+import org.waman.worldbrain.system.single.toy.{StateVector, StateBasis}
 import spire.random.Generator
 
 class Bob private (val keyLength: Int, rng: Generator)
     extends qkd.Bob{
 
   private var bases: Seq[StateBasis] = _
-  private var states: Seq[BasisVector] = _
+  private var states: Seq[StateVector] = _
 
   override val establishKeyBehavior: Receive = {
     case QubitMessage(qubits) =>

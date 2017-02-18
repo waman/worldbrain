@@ -3,10 +3,10 @@ package org.waman.worldbrain.system.single.toy
 import org.waman.worldbrain.system
 import spire.random.Generator
 
-class Qubit(private var state: BasisVector)
-  extends system.Qubit[BasisVector, StateBasis]{
+class Qubit(private var state: StateVector)
+  extends system.Qubit[StateVector, StateBasis]{
 
-  override def observe(basis: StateBasis)(implicit rng: Generator): BasisVector =
+  override def observe(basis: StateBasis)(implicit rng: Generator): StateVector =
     synchronized{
       if(basis.contains(this.state))
         this.state

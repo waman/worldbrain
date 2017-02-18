@@ -1,6 +1,6 @@
 package org.waman.worldbrain.system
 
-case class StateBasis[V <: BasisVector](states: Seq[V]){
+case class StateBasis[V <: StateVector](states: Seq[V]){
 
   require(states.length == 2,
     "Single qubit basis must have only two state vectors: " + states.length)

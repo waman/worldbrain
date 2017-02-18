@@ -1,30 +1,32 @@
 package org.waman.worldbrain.system
 
+import spire.algebra.Field
+
 package object single {
 
   import org.waman.worldbrain.system.{single => s}
 
-  def zero[A](implicit a: Fractional[A], ss: StateSpace[A]): s.BasisVector[A] =
+  def zero[F](implicit a: Field[F], ss: StateSpace[F]): s.StateVector[F] =
     ss.zero
 
-  def one[A](implicit a: Fractional[A], ss: StateSpace[A]): s.BasisVector[A] =
+  def one[F](implicit a: Field[F], ss: StateSpace[F]): s.StateVector[F] =
     ss.one
 
-  def plus[A](implicit a: Fractional[A], ss: StateSpace[A]): s.BasisVector[A] =
+  def plus[F](implicit a: Field[F], ss: StateSpace[F]): s.StateVector[F] =
     ss.plus
 
-  def minus[A](implicit a: Fractional[A], ss: StateSpace[A]): s.BasisVector[A] =
+  def minus[F](implicit a: Field[F], ss: StateSpace[F]): s.StateVector[F] =
     ss.minus
 
-  def iPlus[A](implicit a: Fractional[A], ss: StateSpace[A]): s.BasisVector[A] =
+  def iPlus[F](implicit a: Field[F], ss: StateSpace[F]): s.StateVector[F] =
     ss.iPlus
 
-  def iMinus[A](implicit a: Fractional[A], ss: StateSpace[A]): s.BasisVector[A] =
+  def iMinus[F](implicit a: Field[F], ss: StateSpace[F]): s.StateVector[F] =
     ss.iMinus
 
-  def standard[A](implicit a: Fractional[A], ss: StateSpace[A]): s.StateBasis[A] =
+  def standard[F](implicit a: Field[F], ss: StateSpace[F]): s.StateBasis[F] =
     ss.standard
 
-  def hadamard[A](implicit a: Fractional[A], ss: StateSpace[A]): s.StateBasis[A] =
+  def hadamard[F](implicit a: Field[F], ss: StateSpace[F]): s.StateBasis[F] =
     ss.hadamard
 }

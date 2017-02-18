@@ -1,28 +1,29 @@
 package org.waman.worldbrain.system.single
 
-import spire.algebra.{NRoot, Trig}
-import spire.math._
+import spire.algebra.Trig
 import spire.implicits._
+import spire.math._
+import org.waman.worldbrain.system.Tolerance
 
-class StateSpace[A](implicit a: Fractional[A], nroot: NRoot[A], trig: Trig[A]){
+class StateSpace[F](implicit f: Fractional[F], trig: Trig[F], tolerance: Tolerance[F]){
 
-  protected def sqrt2inv: A = a.one / sqrt(a.fromInt(2))
+  private val sqrt2inv = 1/sqrt(f.fromInt(2))
 
-  val zero : BasisVector[A] = BasisVector(a.one, a.zero)
-  val one  : BasisVector[A] = BasisVector(a.zero, a.one)
-  val plus : BasisVector[A] = BasisVector(sqrt2inv, sqrt2inv)
-  val minus: BasisVector[A] = BasisVector(sqrt2inv, -sqrt2inv)
-  val iPlus : BasisVector[A] = BasisVector(sqrt2inv, Complex.i[A] * sqrt2inv)
-  val iMinus: BasisVector[A] = BasisVector(sqrt2inv, -Complex.i[A] * sqrt2inv)
+  val zero : StateVector[F] = StateVector(1, 0)
+  val one  : StateVector[F] = StateVector(0, 1)
+  val plus : StateVector[F] = StateVector(sqrt2inv, sqrt2inv)
+  val minus: StateVector[F] = StateVector(sqrt2inv, -sqrt2inv)
+  val iPlus : StateVector[F] = StateVector(sqrt2inv, Complex.i[F]*sqrt2inv)
+  val iMinus: StateVector[F] = StateVector(sqrt2inv, -Complex.i[F]*sqrt2inv)
 
-  val standard: StateBasis[A] = StateBasis(zero, one)
-  val hadamard: StateBasis[A] = StateBasis(plus, minus)
-  val imaginary: StateBasis[A] = StateBasis(iPlus, iMinus)
+  val standard: StateBasis[F] = StateBasis(zero, one)
+  val hadamard: StateBasis[F] = StateBasis(plus, minus)
+  val imaginary: StateBasis[F] = StateBasis(iPlus, iMinus)
 }
 
 object StateSpace{
-  implicit val FloatStateSpace      = new StateSpace[Float]
-  implicit val DoubleStateSpace     = new StateSpace[Double]
-  implicit val BigDecimalStateSpace = new StateSpace[BigDecimal]
-  implicit val RealStateSpace       = new StateSpace[Real]
+  implicit val floatStateSpace      = new StateSpace[Float]
+  implicit val doubleStateSpace     = new StateSpace[Double]
+  implicit val bigDecimalStateSpace = new StateSpace[BigDecimal]
+  implicit val realStateSpace       = new StateSpace[Real]
 }

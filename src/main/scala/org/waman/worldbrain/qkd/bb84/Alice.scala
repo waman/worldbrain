@@ -14,7 +14,7 @@ class Alice[A: Fractional] protected (val keyLength: Int,
                                       rng: Generator)
     extends qkd.Alice with StateEncoder[A]{
 
-  private var states: Seq[BasisVector[A]] = _
+  private var states: Seq[StateVector[A]] = _
 
   override def establishKeyBehavior: Receive = {
     case EstablishKey(bob) =>
@@ -38,7 +38,7 @@ class Alice[A: Fractional] protected (val keyLength: Int,
       }
     }
 
-    val qubits = this.states.map(new Qubit[A](_))
+    val qubits = this.states.map(Qubit(_))
 
     qubitsCreated(this.states)
 
@@ -46,7 +46,7 @@ class Alice[A: Fractional] protected (val keyLength: Int,
   }
 
   /** For logging */
-  protected def qubitsCreated(states: Seq[BasisVector[A]]): Unit = {}
+  protected def qubitsCreated(states: Seq[StateVector[A]]): Unit = {}
 
   /** For logging */
   protected def sendBasisFilterMessage(filter: Seq[Int]): Unit = {
