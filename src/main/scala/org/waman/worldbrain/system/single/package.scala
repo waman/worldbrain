@@ -6,27 +6,27 @@ package object single {
 
   import org.waman.worldbrain.system.{single => s}
 
-  def zero[F](implicit a: Field[F], ss: StateSpace[F]): s.StateVector[F] =
+  def zero[A](implicit a: Field[A], ss: StateSpace[A]): s.StateVector[A] =
     ss.zero
 
-  def one[F](implicit a: Field[F], ss: StateSpace[F]): s.StateVector[F] =
+  def one[A](implicit a: Field[A], ss: StateSpace[A]): s.StateVector[A] =
     ss.one
 
-  def plus[F](implicit a: Field[F], ss: StateSpace[F]): s.StateVector[F] =
+  def plus[A](implicit a: Field[A], ss: StateSpace[A]): s.StateVector[A] =
     ss.plus
 
-  def minus[F](implicit a: Field[F], ss: StateSpace[F]): s.StateVector[F] =
+  def minus[A](implicit a: Field[A], ss: StateSpace[A]): s.StateVector[A] =
     ss.minus
 
-  def iPlus[F](implicit a: Field[F], ss: StateSpace[F]): s.StateVector[F] =
+  def iPlus[A](implicit a: Field[A], ss: StateSpace[A]): s.StateVector[A] =
     ss.iPlus
 
-  def iMinus[F](implicit a: Field[F], ss: StateSpace[F]): s.StateVector[F] =
+  def iMinus[A](implicit a: Field[A], ss: StateSpace[A]): s.StateVector[A] =
     ss.iMinus
 
-  def standard[F](implicit a: Field[F], ss: StateSpace[F]): s.StateBasis[F] =
+  def standard[A](implicit a: Field[A], ss: StateSpace[A]): s.StateBasis[A] =
     ss.standard
 
-  def hadamard[F](implicit a: Field[F], ss: StateSpace[F]): s.StateBasis[F] =
+  def hadamard[A](implicit a: Field[A], ss: StateSpace[A]): s.StateBasis[A] =
     ss.hadamard
 }

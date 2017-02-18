@@ -5,15 +5,14 @@ import spire.math.Fractional
 import spire.implicits._
 import spire.random.Generator
 
-abstract class Qubit[F: Fractional] extends system.Qubit[StateVector[F], StateBasis[F]]
+abstract class Qubit[A: Fractional] extends system.Qubit[StateVector[A], StateBasis[A]]
 
 object Qubit{
 
-  private class QubitImpl[F](private var state: StateVector[F])
-                            (implicit f: Fractional[F])
-    extends Qubit[F]{
+  private class QubitImpl[A](private var state: StateVector[A])
+                            (implicit f: Fractional[A]) extends Qubit[A]{
 
-    override def observe(basis: StateBasis[F])(implicit rng: Generator): StateVector[F] =
+    override def observe(basis: StateBasis[A])(implicit rng: Generator): StateVector[A] =
       synchronized{
         val v = basis.first
         val p = this.state probability v
@@ -27,6 +26,6 @@ object Qubit{
   }
 
 
-  def apply[F](state: StateVector[F])(implicit f: Fractional[F]): Qubit[F] =
+  def apply[A: Fractional](state: StateVector[A]): Qubit[A] =
     new QubitImpl(state)
 }

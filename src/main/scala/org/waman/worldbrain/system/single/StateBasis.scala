@@ -3,13 +3,13 @@ package org.waman.worldbrain.system.single
 import org.waman.worldbrain.system
 import spire.math.Fractional
 
-class StateBasis[F: Fractional](states: Seq[StateVector[F]])
+class StateBasis[A: Fractional](states: Seq[StateVector[A]])
     extends system.StateBasis(states){
 }
 
 object StateBasis{
-  def apply[F](v0: StateVector[F], v1: StateVector[F])(implicit f: Fractional[F]): StateBasis[F] = {
-    require(v0 * v1 == f.zero)
+  def apply[A: Fractional](v0: StateVector[A], v1: StateVector[A]): StateBasis[A] = {
+    require(v0 * v1 == implicitly[Fractional[A]].zero)
     new StateBasis(Seq(v0, v1))
   }
 

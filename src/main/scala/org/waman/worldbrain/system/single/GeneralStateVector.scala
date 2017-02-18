@@ -2,71 +2,85 @@ package org.waman.worldbrain.system.single
 
 import org.waman.worldbrain.system
 import org.waman.worldbrain.system.Tolerance
-import org.waman.worldbrain.system.single.StateVector.StateVectorImpl
 import spire.algebra._
-import spire.math._
 import spire.implicits._
+import spire.math._
 
-abstract class GeneralStateVector[F](implicit f: Fractional[F], trig: Trig[F])
+abstract class GeneralStateVector[A: Fractional: Trig]
   extends system.StateVector{ lhs =>
 
-  def a: Complex[F]
-  def b: Complex[F]
-  def norm: F
+  def a: Complex[A]
+  def b: Complex[A]
+  def norm: A
 
-  def normalized: StateVector[F]
+  def normalized: StateVector[A]
 
-  def probability(rhs: GeneralStateVector[F]): F =
+  def probability(rhs: GeneralStateVector[A]): A =
     lhs.normalized probability rhs.normalized
 
   //***** Complex vector algebra *****
-  def *(rhs: GeneralStateVector[F]): Complex[F] =
+  def eqv(rhs: GeneralStateVector[A]): Boolean =
+    lhs.a === rhs.a && lhs.b === rhs.b
+
+  def neqv(rhs: GeneralStateVector[A]): Boolean =
+    lhs.a =!= rhs.a || lhs.b =!= rhs.b
+
+  def unary_- : GeneralStateVector[A] =
+    GeneralStateVector(-a, -b)
+
+  def +(rhs: GeneralStateVector[A]): GeneralStateVector[A] =
+    GeneralStateVector(lhs.a + rhs.b, lhs.b + rhs.b)
+
+  def *(x: Complex[A]): GeneralStateVector[A] =
+    GeneralStateVector(lhs.a * x, lhs.b * x)
+
+  def *(rhs: GeneralStateVector[A]): Complex[A] =
     lhs.a.conjugate * rhs.a + lhs.b.conjugate * rhs.b
 
   /** (theta, phi) */
-  def toAnglesOfBlochSphere: (F, F)
+  def toAnglesOfBlochSphere: (A, A)
 
-  def toPointOnBlochSphere: (F, F, F)
+  def toPointOnBlochSphere: (A, A, A)
 
   /** Return null if (0, 0, 1) (infinity) */
-  def toComplex: Complex[F]
+  def toComplex: Complex[A]
 
-  def toTuple: (Complex[F], Complex[F]) = (a, b)
+  def toTuple: (Complex[A], Complex[A]) = (a, b)
 
-  def getPerpendicular: StateVector[F]
+  def getPerpendicular: StateVector[A]
 
   //***** equivalency *****
-  def hasTheSameCoefficientsAs(rhs: GeneralStateVector[F])(implicit t: Tolerance[F]): Boolean =
+  def hasTheSameCoefficientsAs(rhs: GeneralStateVector[A])(implicit t: Tolerance[A]): Boolean =
     t.test(lhs.a, rhs.a) && t.test(lhs.b, rhs.b)
 
-  def isTheSameStateAs(rhs: GeneralStateVector[F])(implicit t: Tolerance[F]): Boolean =
-    t.test(lhs probability rhs, f.one)
+  def isTheSameStateAs(rhs: GeneralStateVector[A])(implicit t: Tolerance[A]): Boolean =
+    t.test(lhs probability rhs, 1)
 
   override def toString: String = s"$a|0> + $b|1>"
 }
 
-object GeneralStateVector{
+object GeneralStateVector extends GeneralStateVectorInstances{
 
-  private class GeneralStateVectorImpl[F](val a: Complex[F], val b: Complex[F])
-                                         (implicit f: Fractional[F], trig: Trig[F], tlr: Tolerance[F])
-    extends GeneralStateVector[F]{ lhs =>
+  private class GeneralStateVectorImpl[A: Fractional: Trig]
+      (val a: Complex[A], val b: Complex[A])
+      extends GeneralStateVector[A]{ lhs =>
 
     override lazy val norm = sqrt((this * this).real)
 
     override def normalized = StateVector(a, b)
 
     /** (theta, phi) */
-    override def toAnglesOfBlochSphere: (F, F) =
+    override def toAnglesOfBlochSphere: (A, A) =
       normalized.toAnglesOfBlochSphere
 
-    override def toPointOnBlochSphere: (F, F, F) =
+    override def toPointOnBlochSphere: (A, A, A) =
       normalized.toPointOnBlochSphere
 
     /** Return null if (0, 0, 1) (infinity) */
-    override def toComplex: Complex[F] =
+    override def toComplex: Complex[A] =
       normalized.toComplex
 
-    override def getPerpendicular: StateVector[F] =
+    override def getPerpendicular: StateVector[A] =
       normalized.getPerpendicular
 
     //***** equivalency *****
@@ -76,31 +90,31 @@ object GeneralStateVector{
   }
   
   //********** apply factory method **********
-  def apply[F](a: Complex[F], b: Complex[F])
-              (implicit f: Fractional[F], trig: Trig[F], tlr: Tolerance[F]): GeneralStateVector[F] =
-    a match {
-      case _ if a.isReal => apply(a.real, b)
-      case _ => new GeneralStateVectorImpl(a, b)
-    }
-
-  def apply[F](a: F, b: Complex[F])
-              (implicit f: Fractional[F], trig: Trig[F], tlr: Tolerance[F]): GeneralStateVector[F] =
-    if(a > 0) {
-      val norm2 = a * a + (b.conjugate * b).real
-      if (tlr.test(norm2, f.one))
-        new StateVectorImpl(a, b)  // guaranteed to be normalized
-      else
-        new GeneralStateVectorImpl(Complex(a), b)
-
-    }else if(a < 0) {
-      new GeneralStateVectorImpl(Complex(a), b)
-
-    }else{
-      if(b.isReal && b.real.isOne) // maybe unnecessary to evaluate by tolerance
-        new StateVectorImpl(f.zero, Complex.one)  // guaranteed to be normalized
-      else
-        new GeneralStateVectorImpl(Complex(a), b)
-    }
+  def apply[A: Fractional: Trig](a: Complex[A], b: Complex[A]): GeneralStateVector[A] =
+    new GeneralStateVectorImpl(a, b)
 }
 
-trait StateVectorInstances[F] extends InnerProductSpace[StateVector[F], F]
+trait GeneralStateVectorInstances{
+  implicit def GeneralStateVectorSpace[A: Fractional: Trig]: GeneralStateVectorAlgebra[A] =
+    new GeneralStateVectorAlgebra[A]
+
+  implicit def GeneralStateVectorSpaceEq[A: Fractional: Trig]: GeneralStateVectorEq[A] =
+    new GeneralStateVectorEq[A]
+}
+
+private[single] class GeneralStateVectorAlgebra[A: Fractional: Trig]
+    extends InnerProductSpace[GeneralStateVector[A], Complex[A]]{
+
+  override implicit def scalar = implicitly[Field[Complex[A]]]
+  override val zero = GeneralStateVector(scalar.zero, scalar.zero)
+
+  override def negate(v: GeneralStateVector[A]) = -v
+  override def plus(v: GeneralStateVector[A], w: GeneralStateVector[A]) = v + w
+  override def timesl(x: Complex[A], v: GeneralStateVector[A]) = v * x
+  override def dot(v: GeneralStateVector[A], w: GeneralStateVector[A]) = v * w
+}
+
+private[single] class GeneralStateVectorEq[A: Fractional: Trig] extends Eq[GeneralStateVector[A]]{
+  override def eqv(x: GeneralStateVector[A], y: GeneralStateVector[A]) = x eqv y
+  override def neqv(x: GeneralStateVector[A], y: GeneralStateVector[A]) = x neqv y
+}
