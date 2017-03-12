@@ -2,7 +2,7 @@ package org.waman.worldbrain.qkd.bb84.toy
 
 import org.waman.worldbrain.qkd
 import org.waman.worldbrain.qkd.FixedBasesBobFactory
-import org.waman.worldbrain.system.single.toy.{StateVector, StateBasis}
+import org.waman.worldbrain.system.toy.{StateVector, StateBasis}
 import spire.random.Generator
 
 class Bob private (val keyLength: Int, rng: Generator)

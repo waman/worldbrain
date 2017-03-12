@@ -2,7 +2,7 @@ package org.waman.worldbrain.qkd.bb84.toy
 
 import org.waman.worldbrain.Protocol
 import org.waman.worldbrain.Protocol._
-import org.waman.worldbrain.system.single.toy.Qubit
+import org.waman.worldbrain.system.toy.Qubit
 
 //***** Message Types *****
 case object RequestCorrectBases extends Request

@@ -3,7 +3,7 @@ package org.waman.worldbrain.qkd.bb84
 import akka.actor.Actor
 import akka.pattern.pipe
 import org.waman.worldbrain.qkd.AliceFactory
-import org.waman.worldbrain.system.single.{StateVector, StateBasis, StateSpace}
+import org.waman.worldbrain.system.{StateBasis, StateVector}
 import spire.math.Fractional
 import spire.random.Generator
 

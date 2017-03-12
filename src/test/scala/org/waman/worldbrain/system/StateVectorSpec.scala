@@ -1,7 +1,6 @@
-package org.waman.worldbrain.system.single
+package org.waman.worldbrain.system
 
 import org.waman.worldbrain.WorldbrainCustomSpec
-import org.waman.worldbrain.system.Tolerance
 import spire.implicits._
 import spire.math._
 import spire.math.Complex.i
@@ -16,7 +15,7 @@ class StateVectorSpec extends WorldbrainCustomSpec{
   "probability method should" -{
 
     "calculate transition probability to the specified state (for Double)" in {
-      import StateSpace.doubleStateSpace._
+      import org.waman.worldbrain.system.StateSpace.doubleStateSpace._
 
       val conversions = Table(
         ("v0", "v1", "expected"),
@@ -44,7 +43,7 @@ class StateVectorSpec extends WorldbrainCustomSpec{
     }
 
     "for Float" in {
-      import StateSpace.floatStateSpace._
+      import org.waman.worldbrain.system.StateSpace.floatStateSpace._
       val error = 1e-5f
 
       val conversions = Table(
@@ -73,7 +72,7 @@ class StateVectorSpec extends WorldbrainCustomSpec{
     }
 
     "for Real" in {
-      import StateSpace.realStateSpace._
+      import org.waman.worldbrain.system.StateSpace.realStateSpace._
 
       val conversions = Table(
         ("v0", "v1", "expected"),
@@ -102,7 +101,7 @@ class StateVectorSpec extends WorldbrainCustomSpec{
   }
 
   "Type conversion methods" - {
-    import StateSpace.doubleStateSpace._
+    import org.waman.worldbrain.system.StateSpace.doubleStateSpace._
 
     "toAnglesOfBlochSphere method should" - {
 
@@ -179,7 +178,7 @@ class StateVectorSpec extends WorldbrainCustomSpec{
   }
 
   "Companion object" - {
-    import StateSpace.doubleStateSpace._
+    import org.waman.worldbrain.system.StateSpace.doubleStateSpace._
 
     "ofBlochSphere method should" - {
 

@@ -1,9 +1,9 @@
 package org.waman.worldbrain.qkd.bb84
 
 import org.waman.worldbrain.qkd.applyFilter
-import org.waman.worldbrain.system.single.toy.StateBasis._
-import org.waman.worldbrain.system.single.toy.StateVector._
-import org.waman.worldbrain.system.single.toy._
+import org.waman.worldbrain.system.toy.StateBasis._
+import org.waman.worldbrain.system.toy.StateVector._
+import org.waman.worldbrain.system.toy._
 import spire.random.Generator
 
 package object toy {

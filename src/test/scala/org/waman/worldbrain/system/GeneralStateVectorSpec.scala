@@ -1,4 +1,4 @@
-package org.waman.worldbrain.system.single
+package org.waman.worldbrain.system
 
 import org.waman.worldbrain.WorldbrainCustomSpec
 import spire.implicits._

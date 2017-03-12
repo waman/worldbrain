@@ -1,4 +1,4 @@
-package org.waman.worldbrain.system.single
+package org.waman.worldbrain.system
 
 import org.waman.worldbrain.WorldbrainCustomSpec
 
@@ -7,7 +7,7 @@ class QubitSpec extends WorldbrainCustomSpec{
   "observe method" - {
 
     "return the same state permanently" in {
-      import StateSpace.doubleStateSpace._
+      import org.waman.worldbrain.system.StateSpace.doubleStateSpace._
 
       val qubit = Qubit(zero)
 
@@ -18,7 +18,7 @@ class QubitSpec extends WorldbrainCustomSpec{
     }
 
     "return" in {
-      import StateSpace.doubleStateSpace._
+      import org.waman.worldbrain.system.StateSpace.doubleStateSpace._
 
       val n = 10000
       var nPlus = 0

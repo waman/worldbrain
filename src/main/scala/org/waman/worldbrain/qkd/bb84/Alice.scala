@@ -4,7 +4,7 @@ import akka.actor.ActorRef
 import org.waman.worldbrain.qkd
 import org.waman.worldbrain.qkd.AliceFactory
 import org.waman.worldbrain.qkd.QkdProtocol.EstablishKey
-import org.waman.worldbrain.system.single._
+import org.waman.worldbrain.system.{Qubit, StateBasis, StateVector}
 import spire.math.Fractional
 import spire.random.Generator
 

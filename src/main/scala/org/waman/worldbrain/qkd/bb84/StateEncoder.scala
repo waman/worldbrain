@@ -1,7 +1,7 @@
 package org.waman.worldbrain.qkd.bb84
 
 import org.waman.worldbrain.qkd.applyFilter
-import org.waman.worldbrain.system.single.{StateBasis, StateAlias, StateVector}
+import org.waman.worldbrain.system.{StateAlias, StateBasis, StateVector}
 import spire.random.Generator
 
 trait StateEncoder[A] extends StateAlias[A]{

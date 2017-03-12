@@ -1,7 +1,7 @@
 package org.waman.worldbrain.qkd
 
 import akka.actor.{Actor, ActorRef}
-import org.waman.worldbrain.system.single.{StateBasis, StateSpace}
+import org.waman.worldbrain.system.{StateBasis, StateSpace}
 import spire.math.Fractional
 import spire.random.Generator
 

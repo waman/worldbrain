@@ -3,7 +3,7 @@ package org.waman.worldbrain.qkd.b92
 import akka.actor.ActorRef
 import org.waman.worldbrain.qkd
 import org.waman.worldbrain.qkd.EveFactory
-import org.waman.worldbrain.system.single.StateBasis
+import org.waman.worldbrain.system.StateBasis
 import spire.math._
 import spire.random.Generator
 

@@ -1,13 +1,10 @@
-package org.waman.worldbrain.system.single
+package org.waman.worldbrain.system
 
-import org.waman.worldbrain.system
-import org.waman.worldbrain.system.Tolerance
 import spire.algebra._
 import spire.implicits._
 import spire.math._
 
-abstract class GeneralStateVector[A: Fractional: Trig]
-  extends system.StateVector{ lhs =>
+abstract class GeneralStateVector[A: Fractional: Trig]{ lhs =>
 
   def a: Complex[A]
   def b: Complex[A]
@@ -82,11 +79,6 @@ object GeneralStateVector extends GeneralStateVectorInstances{
 
     override def getPerpendicular: StateVector[A] =
       normalized.getPerpendicular
-
-    //***** equivalency *****
-
-    override def toString: String =
-      s"($a)|0> + ($b)|1>"
   }
   
   //********** apply factory method **********
@@ -95,6 +87,7 @@ object GeneralStateVector extends GeneralStateVectorInstances{
 }
 
 trait GeneralStateVectorInstances{
+
   implicit def GeneralStateVectorSpace[A: Fractional: Trig]: GeneralStateVectorAlgebra[A] =
     new GeneralStateVectorAlgebra[A]
 
@@ -102,8 +95,8 @@ trait GeneralStateVectorInstances{
     new GeneralStateVectorEq[A]
 }
 
-private[single] class GeneralStateVectorAlgebra[A: Fractional: Trig]
-    extends InnerProductSpace[GeneralStateVector[A], Complex[A]]{
+private[system] class GeneralStateVectorAlgebra[A: Fractional: Trig]
+  extends InnerProductSpace[GeneralStateVector[A], Complex[A]]{
 
   override implicit def scalar = implicitly[Field[Complex[A]]]
   override val zero = GeneralStateVector(scalar.zero, scalar.zero)
@@ -114,7 +107,7 @@ private[single] class GeneralStateVectorAlgebra[A: Fractional: Trig]
   override def dot(v: GeneralStateVector[A], w: GeneralStateVector[A]) = v * w
 }
 
-private[single] class GeneralStateVectorEq[A: Fractional: Trig] extends Eq[GeneralStateVector[A]]{
+private[system] class GeneralStateVectorEq[A: Fractional: Trig] extends Eq[GeneralStateVector[A]]{
   override def eqv(x: GeneralStateVector[A], y: GeneralStateVector[A]) = x eqv y
   override def neqv(x: GeneralStateVector[A], y: GeneralStateVector[A]) = x neqv y
 }

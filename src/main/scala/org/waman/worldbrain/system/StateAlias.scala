@@ -1,5 +1,4 @@
-package org.waman.worldbrain.system.single
-
+package org.waman.worldbrain.system
 
 trait StateAlias[A]{
 

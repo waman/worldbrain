@@ -5,7 +5,7 @@ import org.waman.worldbrain.qkd
 import spire.math.Fractional
 import spire.random.Generator
 import org.waman.worldbrain.qkd._
-import org.waman.worldbrain.system.single.{StateBasis, StateVector}
+import org.waman.worldbrain.system.{StateBasis, StateVector}
 import spire.algebra.Trig
 
 class Ever[A] private (alice: ActorRef, bob: ActorRef, val keyLength: Int, rng: Generator)

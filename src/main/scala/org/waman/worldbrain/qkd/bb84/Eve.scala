@@ -2,7 +2,7 @@ package org.waman.worldbrain.qkd.bb84
 
 import akka.actor.ActorRef
 import org.waman.worldbrain.qkd
-import org.waman.worldbrain.system.single.{StateBasis, StateSpace, StateVector}
+import org.waman.worldbrain.system.{StateBasis, StateSpace, StateVector}
 import spire.random.Generator
 
 class Eve[A: Fractional] private (alice: ActorRef, bob: ActorRef,

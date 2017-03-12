@@ -2,7 +2,7 @@ package org.waman.worldbrain.qkd.bb84
 
 import org.waman.worldbrain.qkd
 import org.waman.worldbrain.qkd.BobFactory
-import org.waman.worldbrain.system.single.{StateVector, StateBasis}
+import org.waman.worldbrain.system.{StateBasis, StateVector}
 import spire.math.Fractional
 import spire.random.Generator
 

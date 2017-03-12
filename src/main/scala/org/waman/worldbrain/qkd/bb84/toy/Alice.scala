@@ -4,8 +4,8 @@ import akka.actor.ActorRef
 import org.waman.worldbrain.qkd
 import org.waman.worldbrain.qkd.FixedBasesAliceFactory
 import org.waman.worldbrain.qkd.QkdProtocol.EstablishKey
-import org.waman.worldbrain.system.single.toy.StateVector._
-import org.waman.worldbrain.system.single.toy.{StateVector, Qubit}
+import org.waman.worldbrain.system.toy.StateVector._
+import org.waman.worldbrain.system.toy.{StateVector, Qubit}
 import spire.random.Generator
 
 class Alice private (val keyLength: Int, nChunk: Int, rng: Generator)
@@ -35,7 +35,7 @@ class Alice private (val keyLength: Int, nChunk: Int, rng: Generator)
       }
     }
 
-    val qubits = this.states.map(new Qubit(_))
+    val qubits = this.states.map(Qubit(_))
 
     qubitsCreated(this.states)
 

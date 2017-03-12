@@ -1,11 +1,10 @@
-package org.waman.worldbrain.system.single
+package org.waman.worldbrain.system
 
 import spire.algebra.Trig
 import spire.implicits._
 import spire.math._
-import org.waman.worldbrain.system.Tolerance
 
-class StateSpace[A: Fractional: Trig](implicit tolerance: Tolerance[A]){
+class StateSpace[A: Fractional: Trig]{
 
   val zero : StateVector[A] = StateVector(1, 0)
   val one  : StateVector[A] = StateVector(0, 1)

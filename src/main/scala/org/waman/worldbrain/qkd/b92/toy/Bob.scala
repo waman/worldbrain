@@ -2,8 +2,8 @@ package org.waman.worldbrain.qkd.b92.toy
 
 import org.waman.worldbrain.qkd
 import org.waman.worldbrain.qkd.FixedBasesBobFactory
-import org.waman.worldbrain.system.single.toy.StateBasis._
-import org.waman.worldbrain.system.single.toy.StateVector._
+import org.waman.worldbrain.system.toy.StateBasis._
+import org.waman.worldbrain.system.toy.StateVector._
 import spire.random.Generator
 
 class Bob private (val keyLength: Int, rng: Generator)
