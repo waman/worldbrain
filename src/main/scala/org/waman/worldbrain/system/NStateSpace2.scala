@@ -6,8 +6,8 @@ import spire.implicits._
 
 class NStateSpace2[A: Fractional: Trig]{
 
-  private val v1 = Complex.one[A]
-  private val v0 = Complex.zero[A]
+  private def cZero = Complex.zero[A]
+  private def cOne = Complex.one[A]
 
   // Standard basis
   /** |0> = |00> */
@@ -24,16 +24,16 @@ class NStateSpace2[A: Fractional: Trig]{
 
   // Bell basis
   /** N(|00> + |11>) */
-  val phiPlus: NStateVector[A] = NStateVector(2)(v1, v0, v0, v1)
+  val phiPlus: NStateVector[A] = NStateVector(2)(cOne, cZero, cZero, cOne)
 
   /** N(|00> - |11>) */
-  val phiMinus: NStateVector[A] = NStateVector(2)(v1, v0, v0, -v1)
+  val phiMinus: NStateVector[A] = NStateVector(2)(cOne, cZero, cZero, -cOne)
 
   /** N(|01> + |10>) */
-  val psiPlus: NStateVector[A] = NStateVector(2)(v0, v1, v1, v0)
+  val psiPlus: NStateVector[A] = NStateVector(2)(cZero, cOne, cOne, cZero)
 
   /** N(|01> - |10>) */
-  val psiMinus: NStateVector[A] = NStateVector(2)(v0, v1, -v1, v0)
+  val psiMinus: NStateVector[A] = NStateVector(2)(cZero, cOne, -cOne, cZero)
 
   val standard: NStateBasis[A] = NStateBasis(zero, one, two, three)
   val bell: NStateBasis[A] = NStateBasis(phiPlus, phiMinus, psiPlus, psiMinus)

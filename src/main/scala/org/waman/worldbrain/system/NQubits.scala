@@ -2,7 +2,7 @@ package org.waman.worldbrain.system
 
 import spire.algebra.Trig
 import spire.implicits._
-import spire.math.Fractional
+import spire.math._
 import spire.random.Generator
 
 import scala.annotation.tailrec
@@ -38,13 +38,15 @@ class NQubits[A: Fractional: Trig] private (protected var state: NStateVector[A]
       val first = basis.first
       val (a_, b_) = (first.a.conjugate, first.b.conjugate)
 
-      val p = this.state.map(i)((c, d) => (a_ * c + b_ * d).abs).map(x => x*x).reduce(_+_)
+      val p = this.state.probabilityOfSingleQubitObservation(i) { (c0, c1) =>
+        (a_ * c0 + b_ * c1).abs
+      }
 
-      if(rng.nextDouble() <= p){
-        this.state = this.state.updateQubitState(i, basis.first)
+      if(rng.nextDouble <= p){
+        this.state = this.state.updated(i, basis.first, 1/sqrt(p))
         basis.first
       }else{
-        this.state = this.state.updateQubitState(i, basis.second)
+        this.state = this.state.updated(i, basis.second, 1/sqrt(1-p))
         basis.second
       }
     }
@@ -52,25 +54,28 @@ class NQubits[A: Fractional: Trig] private (protected var state: NStateVector[A]
   /** Observe i-th qubit in standard basis */
   def observeInStandardBasis(i: Int)(implicit ss: StateSpace[A], rng: Generator): StateVector[A] =
     synchronized{
-      val p = this.state.map(i)((c, d) => c.abs).map(x => x*x).reduce(_+_)
-      if(rng.nextDouble() <= p){
-        this.state = this.state.updateQubitStateZero(i)
+      val p = this.state.probabilityOfSingleQubitObservation(i) { (c0, c1) => c0.abs }
+
+      if(rng.nextDouble <= p){
+        this.state = this.state.updatedToZero(i, 1/sqrt(p))
         ss.zero
       }else{
-        this.state = this.state.updateQubitStateOne(i)
+        this.state = this.state.updatedToOne(i, 1/sqrt(1-p))
         ss.one
       }
     }
 
   def observeInHadamardBasis(i: Int)(implicit ss: StateSpace[A], rng: Generator): StateVector[A] =
     synchronized{
-      val p = this.state.map(i)((c, d) => (c+d).abs).map(x => x*x/2).reduce(_+_)
+      val p = this.state.probabilityOfSingleQubitObservation(i) { (c0, c1) =>
+        (c0 + c1).abs / 2
+      }
 
-      if(rng.nextDouble() <= p){
-        this.state = this.state.updateQubitStatePlus(i)
+      if(rng.nextDouble <= p){
+        this.state = this.state.updatedToPlus(i, 1/sqrt(p))
         ss.plus
       }else{
-        this.state = this.state.updateQubitStateMinus(i)
+        this.state = this.state.updatedToMinus(i, 1/sqrt(1-p))
         ss.minus
       }
     }
